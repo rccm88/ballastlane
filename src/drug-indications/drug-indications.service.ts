@@ -46,10 +46,6 @@ export class DrugIndicationsService {
   ): Promise<DrugIndication> {
     const drugIndication = await this.findOne(id);
 
-    if (!drugIndication) {
-      throw new NotFoundException(`Drug indication with ID ${id} not found`);
-    }
-
     const updatedEntity = this.drugIndicationRepository.merge(
       drugIndication,
       updateDrugIndicationDto,
@@ -57,7 +53,9 @@ export class DrugIndicationsService {
     return this.drugIndicationRepository.save(updatedEntity);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} drugIndication`;
+  async remove(id: string): Promise<void> {
+    const drugIndication = await this.findOne(id);
+
+    await this.drugIndicationRepository.remove(drugIndication);
   }
 }

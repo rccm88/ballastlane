@@ -42,7 +42,7 @@ export class DrugIndicationsController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.drugIndicationsService.remove(+id);
+  remove(@Param('id', ParseUUIDPipe) id: string) {
+    return this.drugIndicationsService.remove(id);
   }
 }
