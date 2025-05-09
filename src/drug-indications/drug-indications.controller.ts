@@ -11,7 +11,9 @@ import {
 import { DrugIndicationsService } from './drug-indications.service';
 import { CreateDrugIndicationDto } from './dto/create-drug-indication.dto';
 import { UpdateDrugIndicationDto } from './dto/update-drug-indication.dto';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 
+@ApiTags('drug-indications')
 @Controller('drug-indications')
 export class DrugIndicationsController {
   constructor(
@@ -19,21 +21,41 @@ export class DrugIndicationsController {
   ) {}
 
   @Post()
+  @ApiOperation({ summary: 'Create a new drug indication' })
+  @ApiResponse({
+    status: 201,
+    description: 'Drug indication successfully created',
+  })
+  @ApiResponse({ status: 400, description: 'Invalid input data' })
   create(@Body() createDrugIndicationDto: CreateDrugIndicationDto) {
     return this.drugIndicationsService.create(createDrugIndicationDto);
   }
 
   @Get()
+  @ApiOperation({ summary: 'Get all drug indications' })
+  @ApiResponse({ status: 200, description: 'Return all drug indications' })
   findAll() {
     return this.drugIndicationsService.findAll();
   }
 
   @Get(':id')
+  @ApiOperation({ summary: 'Get drug indication by ID' })
+  @ApiParam({ name: 'id', description: 'UUID of the drug indication' })
+  @ApiResponse({ status: 200, description: 'Return drug indication by ID' })
+  @ApiResponse({ status: 404, description: 'Drug indication not found' })
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.drugIndicationsService.findOne(id);
   }
 
   @Patch(':id')
+  @ApiOperation({ summary: 'Update drug indication by ID' })
+  @ApiParam({ name: 'id', description: 'UUID of the drug indication' })
+  @ApiResponse({
+    status: 200,
+    description: 'Drug indication successfully updated',
+  })
+  @ApiResponse({ status: 404, description: 'Drug indication not found' })
+  @ApiResponse({ status: 400, description: 'Invalid input data' })
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateDrugIndicationDto: UpdateDrugIndicationDto,
@@ -42,6 +64,13 @@ export class DrugIndicationsController {
   }
 
   @Delete(':id')
+  @ApiOperation({ summary: 'Delete drug indication by ID' })
+  @ApiParam({ name: 'id', description: 'UUID of the drug indication' })
+  @ApiResponse({
+    status: 200,
+    description: 'Drug indication successfully deleted',
+  })
+  @ApiResponse({ status: 404, description: 'Drug indication not found' })
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.drugIndicationsService.remove(id);
   }
