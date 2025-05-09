@@ -17,7 +17,7 @@ export class User {
   @Column()
   name: string;
 
-  @Column('simple-array', { default: [UserRole.USER] })
+  @Column('varchar', { array: true, default: [UserRole.USER] })
   roles: string[];
 
   @Column({ default: true })
