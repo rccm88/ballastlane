@@ -1,6 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { BeforeInsert, BeforeUpdate } from 'typeorm';
+import { UserRole } from '../../auth/constants/roles.enum';
 
 @Entity()
 export class User {
@@ -16,7 +17,7 @@ export class User {
   @Column()
   name: string;
 
-  @Column('simple-array')
+  @Column('simple-array', { default: [UserRole.USER] })
   roles: string[];
 
   @Column({ default: true })
