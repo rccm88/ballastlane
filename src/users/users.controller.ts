@@ -21,6 +21,7 @@ import {
   ApiOperation,
   ApiResponse,
   ApiBearerAuth,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 
 @ApiTags('users')
@@ -36,6 +37,9 @@ export class UsersController {
   @ApiResponse({ status: 201, description: 'User successfully created' })
   @ApiResponse({ status: 400, description: 'Invalid input data' })
   @ApiResponse({ status: 409, description: 'Email already exists' })
+  @ApiUnauthorizedResponse({
+    description: 'Unauthorized',
+  })
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
   }
@@ -44,6 +48,9 @@ export class UsersController {
   @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Get all users (admin only)' })
   @ApiResponse({ status: 200, description: 'Return all users' })
+  @ApiUnauthorizedResponse({
+    description: 'Unauthorized',
+  })
   findAll() {
     return this.usersService.findAll();
   }
@@ -53,6 +60,9 @@ export class UsersController {
   @ApiOperation({ summary: 'Get user by id (admin only)' })
   @ApiResponse({ status: 200, description: 'Return user by id' })
   @ApiResponse({ status: 404, description: 'User not found' })
+  @ApiUnauthorizedResponse({
+    description: 'Unauthorized',
+  })
   async findOne(@Param('id') id: string) {
     const user = await this.usersService.findOne({ where: { id } });
     if (!user) {
@@ -67,6 +77,9 @@ export class UsersController {
   @ApiResponse({ status: 200, description: 'User successfully updated' })
   @ApiResponse({ status: 404, description: 'User not found' })
   @ApiResponse({ status: 400, description: 'Invalid input data' })
+  @ApiUnauthorizedResponse({
+    description: 'Unauthorized',
+  })
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(id, updateUserDto);
   }
@@ -76,6 +89,9 @@ export class UsersController {
   @ApiOperation({ summary: 'Delete user (admin only)' })
   @ApiResponse({ status: 200, description: 'User successfully deleted' })
   @ApiResponse({ status: 404, description: 'User not found' })
+  @ApiUnauthorizedResponse({
+    description: 'Unauthorized',
+  })
   remove(@Param('id') id: string) {
     return this.usersService.remove(id);
   }
