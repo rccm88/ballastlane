@@ -28,10 +28,9 @@ export class AuthService {
   }
 
   async register(email: string, password: string, name: string) {
-    const hashedPassword = await bcrypt.hash(password, 10);
     const user = await this.usersService.create({
       email,
-      password: hashedPassword,
+      password, // The User entity will hash this password
       name,
       roles: [UserRole.USER], // Default role
     });
