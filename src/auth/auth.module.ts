@@ -5,14 +5,24 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { UsersModule } from '../users/users.module';
+import { ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
     UsersModule,
     PassportModule,
-    JwtModule.register({
-      secret: process.env.JWT_SECRET || 'your-secret-key',
-      signOptions: { expiresIn: '1d' },
+    JwtModule.registerAsync({
+      useFactory: (configService: ConfigService) => {
+        const secret = configService.get<string>('JWT_SECRET');
+        if (!secret) {
+          throw new Error('JWT_SECRET environment variable is not set');
+        }
+        return {
+          secret,
+          signOptions: { expiresIn: '1d' },
+        };
+      },
+      inject: [ConfigService],
     }),
   ],
   providers: [AuthService, JwtStrategy],

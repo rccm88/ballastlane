@@ -8,13 +8,23 @@ import {
   Delete,
   ParseUUIDPipe,
   NotFoundException,
+  UseGuards,
 } from '@nestjs/common';
 import { DrugIndicationsService } from './drug-indications.service';
 import { CreateDrugIndicationDto } from './dto/create-drug-indication.dto';
 import { UpdateDrugIndicationDto } from './dto/update-drug-indication.dto';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiParam,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @ApiTags('drug-indications')
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 @Controller('drug-indications')
 export class DrugIndicationsController {
   constructor(
