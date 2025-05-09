@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FindOneOptions, Repository } from 'typeorm';
 import { CreateDrugIndicationDto } from './dto/create-drug-indication.dto';
 import { UpdateDrugIndicationDto } from './dto/update-drug-indication.dto';
 import { DrugIndication } from './entities/drug-indication.entity';
@@ -29,22 +29,19 @@ export class DrugIndicationsService {
     });
   }
 
-  async findOne(id: string): Promise<DrugIndication> {
-    const drugIndication = await this.drugIndicationRepository.findOneBy({
-      id,
-    });
-
-    if (!drugIndication) {
-      throw new NotFoundException(`Drug indication with ID ${id} not found`);
-    }
-    return drugIndication;
+  async findOne(options: FindOneOptions<DrugIndication>) {
+    return this.drugIndicationRepository.findOne(options);
   }
 
   async update(
     id: string,
     updateDrugIndicationDto: UpdateDrugIndicationDto,
   ): Promise<DrugIndication> {
-    const drugIndication = await this.findOne(id);
+    const drugIndication = await this.findOne({ where: { id } });
+
+    if (!drugIndication) {
+      throw new NotFoundException('Drug indication not found');
+    }
 
     const updatedEntity = this.drugIndicationRepository.merge(
       drugIndication,
@@ -54,7 +51,11 @@ export class DrugIndicationsService {
   }
 
   async remove(id: string): Promise<void> {
-    const drugIndication = await this.findOne(id);
+    const drugIndication = await this.findOne({ where: { id } });
+
+    if (!drugIndication) {
+      throw new NotFoundException('Drug indication not found');
+    }
 
     await this.drugIndicationRepository.remove(drugIndication);
   }

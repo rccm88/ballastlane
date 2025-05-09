@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   ParseUUIDPipe,
+  NotFoundException,
 } from '@nestjs/common';
 import { DrugIndicationsService } from './drug-indications.service';
 import { CreateDrugIndicationDto } from './dto/create-drug-indication.dto';
@@ -43,8 +44,14 @@ export class DrugIndicationsController {
   @ApiParam({ name: 'id', description: 'UUID of the drug indication' })
   @ApiResponse({ status: 200, description: 'Return drug indication by ID' })
   @ApiResponse({ status: 404, description: 'Drug indication not found' })
-  findOne(@Param('id', ParseUUIDPipe) id: string) {
-    return this.drugIndicationsService.findOne(id);
+  async findOne(@Param('id', ParseUUIDPipe) id: string) {
+    const drugIndication = await this.drugIndicationsService.findOne({
+      where: { id },
+    });
+    if (!drugIndication) {
+      throw new NotFoundException('Drug indication not found');
+    }
+    return drugIndication;
   }
 
   @Patch(':id')
