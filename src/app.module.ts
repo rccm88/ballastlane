@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { DrugIndicationsModule } from './drug-indications/drug-indications.module';
 import { DailyMedModule } from './dailymed/dailymed.module';
+import { RedisModule } from './redis/redis.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { DailyMedModule } from './dailymed/dailymed.module';
     UsersModule,
     DrugIndicationsModule,
     DailyMedModule,
+    RedisModule,
   ],
   controllers: [AppController],
   providers: [AppService],

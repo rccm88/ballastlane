@@ -3,9 +3,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { DrugIndicationsService } from './drug-indications.service';
 import { DrugIndicationsController } from './drug-indications.controller';
 import { DrugIndication } from './entities/drug-indication.entity';
+import { RedisModule } from '../redis/redis.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([DrugIndication])],
+  imports: [TypeOrmModule.forFeature([DrugIndication]), RedisModule],
   controllers: [DrugIndicationsController],
   providers: [DrugIndicationsService],
   exports: [DrugIndicationsService],

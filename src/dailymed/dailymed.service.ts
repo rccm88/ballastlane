@@ -7,6 +7,7 @@ import { OpenAiService } from '../openai/openai.service';
 import { CreateDrugIndicationDto } from 'src/drug-indications/dto/create-drug-indication.dto';
 import { DrugIndication } from 'src/drug-indications/entities/drug-indication.entity';
 import { ILike } from 'typeorm';
+import { RedisService } from '../redis/redis.service';
 
 const DAILYMED_API_URL = 'https://dailymed.nlm.nih.gov/dailymed/services/v2';
 
@@ -27,11 +28,14 @@ export class DailyMedService {
   private readonly logger = new Logger(DailyMedService.name);
   private readonly baseUrl: string;
   private readonly parser: xml2js.Parser;
+  private readonly CACHE_PREFIX = 'dailymed:';
+  private readonly CACHE_TTL = 86400; // 24 hours in seconds
 
   constructor(
     private readonly configService: ConfigService,
     private readonly drugIndicationsService: DrugIndicationsService,
     private readonly openAiService: OpenAiService,
+    private readonly redisService: RedisService,
   ) {
     this.baseUrl = DAILYMED_API_URL;
     this.parser = new xml2js.Parser({
@@ -47,6 +51,10 @@ export class DailyMedService {
     });
   }
 
+  private getCacheKey(drugName: string): string {
+    return `${this.CACHE_PREFIX}${drugName.toLowerCase()}`;
+  }
+
   /**
    * Search for a drug name and return the first matching SET ID
    * @param name Drug name to search for
@@ -54,8 +62,15 @@ export class DailyMedService {
    */
   async searchDrugLabel(name: string): Promise<DrugIndication[]> {
     try {
-      const endpoint = `${this.baseUrl}/spls.json`;
+      const cacheKey = this.getCacheKey(name);
+      const cached = await this.redisService.get<DrugIndication[]>(cacheKey);
 
+      if (cached) {
+        this.logger.log(`Cache hit for drug: ${name}`);
+        return cached;
+      }
+
+      const endpoint = `${this.baseUrl}/spls.json`;
       const response = await axios.get(endpoint, {
         params: {
           drug_name: name,
@@ -71,28 +86,25 @@ export class DailyMedService {
       }
 
       const indications = await this.getIndicationsFromSetId(firstMatch.setid);
-
       const mappedIndications =
         await this.openAiService.mapIndicationsToICD10(indications);
 
-      console.log(mappedIndications);
-
       if (mappedIndications.length > 0) {
-        // Add drugName to each indication
         const indicationsWithDrugName = mappedIndications.map((indication) => ({
           ...indication,
           drugName: name,
         }));
 
-        // Remove existing indications for this drug
         await this.drugIndicationsService.removeBulk({
           where: { drugName: ILike(name.toLowerCase()) },
         });
 
-        // Store the mapped indications in the database
-        return await this.drugIndicationsService.createBulk({
+        const savedIndications = await this.drugIndicationsService.createBulk({
           indications: indicationsWithDrugName as CreateDrugIndicationDto[],
         });
+
+        await this.redisService.set(cacheKey, savedIndications, this.CACHE_TTL);
+        return savedIndications;
       }
 
       return [];
