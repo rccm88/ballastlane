@@ -34,7 +34,7 @@ export class UsersController {
 
   @Post()
   @Roles(UserRole.ADMIN)
-  @ApiOperation({ summary: 'Create a new user (admin only)' })
+  @ApiOperation({ summary: 'Create a new user (admin role)' })
   @ApiResponse({ status: 201, description: 'User successfully created' })
   @ApiResponse({ status: 400, description: 'Invalid input data' })
   @ApiResponse({ status: 409, description: 'Email already exists' })
@@ -47,7 +47,7 @@ export class UsersController {
 
   @Get()
   @Roles(UserRole.ADMIN)
-  @ApiOperation({ summary: 'Get all users (admin only)' })
+  @ApiOperation({ summary: 'Get all users (admin role)' })
   @ApiResponse({ status: 200, description: 'Return all users' })
   @ApiUnauthorizedResponse({
     description: 'Unauthorized',
@@ -58,7 +58,7 @@ export class UsersController {
 
   @Get(':id')
   @Roles(UserRole.ADMIN)
-  @ApiOperation({ summary: 'Get user by id (admin only)' })
+  @ApiOperation({ summary: 'Get user by id (admin role)' })
   @ApiResponse({ status: 200, description: 'Return user by id' })
   @ApiResponse({ status: 404, description: 'User not found' })
   @ApiUnauthorizedResponse({
@@ -74,7 +74,7 @@ export class UsersController {
 
   @Patch(':id')
   @Roles(UserRole.ADMIN)
-  @ApiOperation({ summary: 'Update user (admin only)' })
+  @ApiOperation({ summary: 'Update user (admin role)' })
   @ApiResponse({ status: 200, description: 'User successfully updated' })
   @ApiResponse({ status: 404, description: 'User not found' })
   @ApiResponse({ status: 400, description: 'Invalid input data' })
@@ -90,7 +90,7 @@ export class UsersController {
 
   @Delete(':id')
   @Roles(UserRole.ADMIN)
-  @ApiOperation({ summary: 'Delete user (admin only)' })
+  @ApiOperation({ summary: 'Delete user (admin role)' })
   @ApiResponse({ status: 200, description: 'User successfully deleted' })
   @ApiResponse({ status: 404, description: 'User not found' })
   @ApiUnauthorizedResponse({

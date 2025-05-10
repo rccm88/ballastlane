@@ -1,6 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import { BeforeInsert, BeforeUpdate } from 'typeorm';
+import { BeforeInsert } from 'typeorm';
 import { UserRole } from '../../auth/constants/roles.enum';
 
 @Entity()
@@ -24,7 +24,6 @@ export class User {
   isActive: boolean;
 
   @BeforeInsert()
-  @BeforeUpdate()
   async hashPassword() {
     if (this.password) {
       const salt = await bcrypt.genSalt();

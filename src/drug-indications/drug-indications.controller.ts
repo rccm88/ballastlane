@@ -23,10 +23,13 @@ import {
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { DrugIndication } from './entities/drug-indication.entity';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { UserRole } from 'src/auth/constants/roles.enum';
 
 @ApiTags('drug-indications')
 @ApiBearerAuth()
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('drug-indications')
 export class DrugIndicationsController {
   constructor(
@@ -34,7 +37,8 @@ export class DrugIndicationsController {
   ) {}
 
   @Post()
-  @ApiOperation({ summary: 'Create a new drug indication' })
+  @Roles(UserRole.USER)
+  @ApiOperation({ summary: 'Create a new drug indication (user role)' })
   @ApiResponse({
     status: 201,
     description: 'The drug indication has been successfully created.',
@@ -46,7 +50,8 @@ export class DrugIndicationsController {
   }
 
   @Post('bulk')
-  @ApiOperation({ summary: 'Create multiple drug indications' })
+  @Roles(UserRole.USER)
+  @ApiOperation({ summary: 'Create multiple drug indications (user role)' })
   @ApiResponse({
     status: 201,
     description: 'The drug indications have been successfully created.',
@@ -59,7 +64,8 @@ export class DrugIndicationsController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get all drug indications' })
+  @Roles(UserRole.USER)
+  @ApiOperation({ summary: 'Get all drug indications (user role)' })
   @ApiResponse({ status: 200, description: 'Return all drug indications' })
   findAll() {
     return this.drugIndicationsService.findAll({
@@ -71,7 +77,8 @@ export class DrugIndicationsController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get drug indication by ID' })
+  @Roles(UserRole.USER)
+  @ApiOperation({ summary: 'Get drug indication by ID (user role)' })
   @ApiParam({ name: 'id', description: 'UUID of the drug indication' })
   @ApiResponse({ status: 200, description: 'Return drug indication by ID' })
   @ApiResponse({ status: 404, description: 'Drug indication not found' })
@@ -86,7 +93,8 @@ export class DrugIndicationsController {
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Update drug indication by ID' })
+  @Roles(UserRole.USER)
+  @ApiOperation({ summary: 'Update drug indication by ID (user role)' })
   @ApiParam({ name: 'id', description: 'UUID of the drug indication' })
   @ApiResponse({
     status: 200,
@@ -102,7 +110,8 @@ export class DrugIndicationsController {
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Delete drug indication by ID' })
+  @Roles(UserRole.USER)
+  @ApiOperation({ summary: 'Delete drug indication by ID (user role)' })
   @ApiParam({ name: 'id', description: 'UUID of the drug indication' })
   @ApiResponse({
     status: 200,

@@ -14,7 +14,7 @@ export class AuthController {
   ) {}
 
   @Post('register')
-  @ApiOperation({ summary: 'Register a new user' })
+  @ApiOperation({ summary: 'Register a new user (public)' })
   @ApiResponse({ status: 201, description: 'User successfully registered' })
   @ApiResponse({ status: 400, description: 'Invalid input data' })
   @ApiResponse({ status: 409, description: 'Email already exists' })
@@ -24,7 +24,7 @@ export class AuthController {
   }
 
   @Post('login')
-  @ApiOperation({ summary: 'Login user' })
+  @ApiOperation({ summary: 'Login user (public)' })
   @ApiResponse({ status: 200, description: 'User successfully logged in' })
   @ApiResponse({ status: 400, description: 'Invalid input data' })
   @ApiResponse({ status: 401, description: 'Invalid credentials' })
