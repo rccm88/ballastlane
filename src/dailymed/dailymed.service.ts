@@ -2,7 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
 import { DrugIndicationsService } from '../drug-indications/drug-indications.service';
-import { CreateDrugIndicationDto } from '../drug-indications/dto/create-drug-indication.dto';
 import * as xml2js from 'xml2js';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -186,122 +185,6 @@ export class DailyMedService {
       this.logger.error(
         `Error fetching Indications for SET ID ${setId}: ${error.message}`,
       );
-      throw error;
-    }
-  }
-
-  /**
-   * Get a specific drug label by SET ID
-   * @param setId DailyMed Set ID
-   * @returns Drug label information
-   */
-  async getDrugLabel(setId: string) {
-    try {
-      const response = await axios.get(`${this.baseUrl}/spls/${setId}`);
-      return response.data;
-    } catch (error) {
-      this.logger.error(`Error fetching drug label: ${error.message}`);
-      throw error;
-    }
-  }
-
-  /**
-   * Extract indications from a drug label
-   * @param labelData The full drug label data
-   * @returns Array of extracted indications with their sections
-   */
-  private extractIndicationsFromLabel(labelData: any) {
-    const indications = [];
-
-    // Look for common indication section headers
-    const indicationSections = [
-      'INDICATIONS AND USAGE',
-      'INDICATIONS',
-      'USES',
-      'CLINICAL STUDIES',
-      'CLINICAL PHARMACOLOGY',
-    ];
-
-    // Extract text from each section
-    for (const section of indicationSections) {
-      if (labelData[section]) {
-        // Clean and process the text
-        const text = this.cleanIndicationText(labelData[section]);
-        if (text) {
-          indications.push({
-            text,
-            section,
-            confidence: 1.0, // High confidence for exact section matches
-          });
-        }
-      }
-    }
-
-    return indications;
-  }
-
-  /**
-   * Clean and process indication text
-   * @param text Raw indication text
-   * @returns Cleaned indication text
-   */
-  private cleanIndicationText(text: string): string {
-    if (!text) return '';
-
-    // Remove HTML tags if present
-    text = text.replace(/<[^>]*>/g, ' ');
-
-    // Remove extra whitespace
-    text = text.replace(/\s+/g, ' ').trim();
-
-    // Remove common boilerplate text
-    text = text.replace(
-      /See full prescribing information for complete boxed warning\./g,
-      '',
-    );
-    text = text.replace(
-      /See full prescribing information for complete indication\./g,
-      '',
-    );
-
-    return text;
-  }
-
-  /**
-   * Extract and save indications from a drug label
-   * @param setId DailyMed Set ID
-   * @returns Array of created drug indications
-   */
-  async extractAndSaveIndications(setId: string) {
-    try {
-      const labelData = await this.getDrugLabel(setId);
-
-      // Extract indications from the label
-      const indications = this.extractIndicationsFromLabel(labelData);
-
-      // Create drug indications in the database
-      const createdIndications = await Promise.all(
-        indications.map(async (indication) => {
-          const dto: CreateDrugIndicationDto = {
-            drugName: 'dupilumab',
-            brandName: 'Dupixent',
-            indication: indication.text,
-            icd10Codes: [], // This will be populated by the ICD-10 mapping service
-            metadata: {
-              source: 'DailyMed',
-              confidence: indication.confidence,
-              version: labelData.version || '1.0',
-              section: indication.section,
-            },
-          };
-
-          return this.drugIndicationsService.create(dto);
-        }),
-      );
-
-      return createdIndications;
-    } catch (error) {
-      this.logger.error(`Error extracting indications: ${error.message}`);
       throw error;
     }
   }
