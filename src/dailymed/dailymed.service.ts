@@ -6,6 +6,7 @@ import * as xml2js from 'xml2js';
 import { OpenAiService } from '../openai/openai.service';
 import { CreateDrugIndicationDto } from 'src/drug-indications/dto/create-drug-indication.dto';
 import { DrugIndication } from 'src/drug-indications/entities/drug-indication.entity';
+import { ILike } from 'typeorm';
 
 const DAILYMED_API_URL = 'https://dailymed.nlm.nih.gov/dailymed/services/v2';
 
@@ -83,6 +84,11 @@ export class DailyMedService {
               drugName: name,
             }),
           );
+
+          // Remove existing indications for this drug
+          await this.drugIndicationsService.removeBulk({
+            where: { drugName: ILike(name) },
+          });
 
           // Store the mapped indications in the database
           return await this.drugIndicationsService.createBulk({

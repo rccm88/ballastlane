@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOneOptions, Repository } from 'typeorm';
+import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { CreateDrugIndicationDto } from './dto/create-drug-indication.dto';
 import { UpdateDrugIndicationDto } from './dto/update-drug-indication.dto';
 import { DrugIndication } from './entities/drug-indication.entity';
@@ -31,12 +31,10 @@ export class DrugIndicationsService {
     return this.drugIndicationRepository.save(drugIndications);
   }
 
-  async findAll(): Promise<DrugIndication[]> {
-    return this.drugIndicationRepository.find({
-      order: {
-        createdAt: 'DESC',
-      },
-    });
+  async findAll(
+    options: FindManyOptions<DrugIndication>,
+  ): Promise<DrugIndication[]> {
+    return this.drugIndicationRepository.find(options);
   }
 
   async findOne(options: FindOneOptions<DrugIndication>) {
@@ -60,7 +58,7 @@ export class DrugIndicationsService {
     return this.drugIndicationRepository.save(updatedEntity);
   }
 
-  async remove(options: FindOneOptions<DrugIndication>): Promise<void> {
+  async removeOne(options: FindOneOptions<DrugIndication>): Promise<void> {
     const drugIndication = await this.findOne(options);
 
     if (!drugIndication) {
@@ -68,5 +66,11 @@ export class DrugIndicationsService {
     }
 
     await this.drugIndicationRepository.remove(drugIndication);
+  }
+
+  // Function to remove bulk indications for a drug
+  async removeBulk(options: FindManyOptions<DrugIndication>): Promise<void> {
+    const drugIndications = await this.findAll(options);
+    await this.drugIndicationRepository.remove(drugIndications);
   }
 }

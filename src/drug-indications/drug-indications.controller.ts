@@ -62,7 +62,11 @@ export class DrugIndicationsController {
   @ApiOperation({ summary: 'Get all drug indications' })
   @ApiResponse({ status: 200, description: 'Return all drug indications' })
   findAll() {
-    return this.drugIndicationsService.findAll();
+    return this.drugIndicationsService.findAll({
+      order: {
+        createdAt: 'DESC',
+      },
+    });
   }
 
   @Get(':id')
@@ -105,6 +109,6 @@ export class DrugIndicationsController {
   })
   @ApiResponse({ status: 404, description: 'Drug indication not found' })
   remove(@Param('id', ParseUUIDPipe) id: string) {
-    return this.drugIndicationsService.remove({ where: { id } });
+    return this.drugIndicationsService.removeOne({ where: { id } });
   }
 }
