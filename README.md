@@ -197,7 +197,7 @@ Note: All endpoints require JWT authentication and USER role.
    - Log rotation
    - Backup verification
 
-### How would you lead an engineering team to implement and maintain this project
+### How would you lead an engineering team to implement and maintain this project?
 
 1. **Project Setup and Planning**
 
