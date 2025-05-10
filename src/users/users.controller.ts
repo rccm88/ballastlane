@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   NotFoundException,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -63,7 +64,7 @@ export class UsersController {
   @ApiUnauthorizedResponse({
     description: 'Unauthorized',
   })
-  async findOne(@Param('id') id: string) {
+  async findOne(@Param('id', ParseUUIDPipe) id: string) {
     const user = await this.usersService.findOne({ where: { id } });
     if (!user) {
       throw new NotFoundException('User not found');
@@ -80,7 +81,10 @@ export class UsersController {
   @ApiUnauthorizedResponse({
     description: 'Unauthorized',
   })
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+  update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
     return this.usersService.update(id, updateUserDto);
   }
 
