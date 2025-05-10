@@ -66,35 +66,33 @@ export class DailyMedService {
 
       const firstMatch = response.data?.data?.[0];
 
-      if (firstMatch.setid) {
-        const indications = await this.getIndicationsFromSetId(
-          firstMatch.setid,
-        );
+      if (!firstMatch || !firstMatch.setid) {
+        return [];
+      }
 
-        const mappedIndications =
-          await this.openAiService.mapIndicationsToICD10(indications);
+      const indications = await this.getIndicationsFromSetId(firstMatch.setid);
 
-        console.log(mappedIndications);
+      const mappedIndications =
+        await this.openAiService.mapIndicationsToICD10(indications);
 
-        if (mappedIndications.length > 0) {
-          // Add drugName to each indication
-          const indicationsWithDrugName = mappedIndications.map(
-            (indication) => ({
-              ...indication,
-              drugName: name,
-            }),
-          );
+      console.log(mappedIndications);
 
-          // Remove existing indications for this drug
-          await this.drugIndicationsService.removeBulk({
-            where: { drugName: ILike(name.toLowerCase()) },
-          });
+      if (mappedIndications.length > 0) {
+        // Add drugName to each indication
+        const indicationsWithDrugName = mappedIndications.map((indication) => ({
+          ...indication,
+          drugName: name,
+        }));
 
-          // Store the mapped indications in the database
-          return await this.drugIndicationsService.createBulk({
-            indications: indicationsWithDrugName as CreateDrugIndicationDto[],
-          });
-        }
+        // Remove existing indications for this drug
+        await this.drugIndicationsService.removeBulk({
+          where: { drugName: ILike(name.toLowerCase()) },
+        });
+
+        // Store the mapped indications in the database
+        return await this.drugIndicationsService.createBulk({
+          indications: indicationsWithDrugName as CreateDrugIndicationDto[],
+        });
       }
 
       return [];
