@@ -8,5 +8,6 @@ import { DrugIndication } from './entities/drug-indication.entity';
   imports: [TypeOrmModule.forFeature([DrugIndication])],
   controllers: [DrugIndicationsController],
   providers: [DrugIndicationsService],
+  exports: [DrugIndicationsService],
 })
 export class DrugIndicationsModule {}

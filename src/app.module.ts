@@ -7,6 +7,8 @@ import { getDatabaseConfig } from './config/database.config';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { DrugIndicationsModule } from './drug-indications/drug-indications.module';
+import { DailyMedModule } from './dailymed/dailymed.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -20,6 +22,7 @@ import { DrugIndicationsModule } from './drug-indications/drug-indications.modul
     AuthModule,
     UsersModule,
     DrugIndicationsModule,
+    DailyMedModule,
   ],
   controllers: [AppController],
   providers: [AppService],

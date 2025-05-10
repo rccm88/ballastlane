@@ -12,19 +12,17 @@ import {
 import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
-class MetadataDto {
+export class MetadataDto {
   @ApiProperty({
-    description: 'Source of the drug indication data',
-    example: 'FDA Database',
+    description: 'Source of the indication data',
+    example: 'DailyMed',
   })
   @IsString()
   source: string;
 
   @ApiProperty({
-    description: 'Confidence score of the indication (0-1)',
+    description: 'Confidence score of the indication extraction',
     example: 0.95,
-    minimum: 0,
-    maximum: 1,
   })
   @IsNumber()
   @Min(0)
@@ -33,10 +31,17 @@ class MetadataDto {
 
   @ApiProperty({
     description: 'Version of the data source',
-    example: '1.2.3',
+    example: '1.0',
   })
   @IsString()
   version: string;
+
+  @ApiProperty({
+    description: 'Section of the label where the indication was found',
+    example: 'INDICATIONS AND USAGE',
+  })
+  @IsString()
+  section: string;
 }
 
 export class CreateDrugIndicationDto {
