@@ -4,6 +4,7 @@ import axios from 'axios';
 import { DrugIndicationsService } from '../drug-indications/drug-indications.service';
 import * as xml2js from 'xml2js';
 import { OpenAiService } from '../openai/openai.service';
+import { CreateDrugIndicationDto } from 'src/drug-indications/dto/create-drug-indication.dto';
 
 const DAILYMED_API_URL = 'https://dailymed.nlm.nih.gov/dailymed/services/v2';
 
@@ -74,7 +75,18 @@ export class DailyMedService {
         console.log(mappedIndications);
 
         if (mappedIndications.length > 0) {
+          // Add drugName to each indication
+          const indicationsWithDrugName = mappedIndications.map(
+            (indication) => ({
+              ...indication,
+              drugName: name,
+            }),
+          );
+
           // Store the mapped indications in the database
+          await this.drugIndicationsService.createBulk({
+            indications: indicationsWithDrugName as CreateDrugIndicationDto[],
+          });
         }
       }
 
