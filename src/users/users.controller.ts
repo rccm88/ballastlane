@@ -96,7 +96,7 @@ export class UsersController {
   @ApiUnauthorizedResponse({
     description: 'Unauthorized',
   })
-  remove(@Param('id') id: string) {
+  remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.usersService.remove(id);
   }
 }
