@@ -7,11 +7,11 @@ import {
   ApiBearerAuth,
   ApiQuery,
 } from '@nestjs/swagger';
-import { DrugIndication } from 'src/drug-indications/entities/drug-indication.entity';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { RolesGuard } from 'src/auth/guards/roles.guard';
-import { Roles } from 'src/auth/decorators/roles.decorator';
-import { UserRole } from 'src/auth/constants/roles.enum';
+import { DrugIndication } from '../drug-indications/entities/drug-indication.entity';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { UserRole } from '../auth/constants/roles.enum';
 
 @ApiTags('dailymed')
 @ApiBearerAuth()
