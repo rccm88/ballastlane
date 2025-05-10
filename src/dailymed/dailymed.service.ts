@@ -3,8 +3,6 @@ import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
 import { DrugIndicationsService } from '../drug-indications/drug-indications.service';
 import * as xml2js from 'xml2js';
-import * as fs from 'fs';
-import * as path from 'path';
 import { OpenAiService } from '../openai/openai.service';
 
 const DAILYMED_API_URL = 'https://dailymed.nlm.nih.gov/dailymed/services/v2';
@@ -101,19 +99,6 @@ export class DailyMedService {
       const response = await axios.get(endpoint, {
         responseType: 'text', // Ensure we get raw XML as text
       });
-
-      // Save the XML response to a file
-      const xmlDir = path.join(process.cwd(), 'data', 'xml');
-      const xmlPath = path.join(xmlDir, `${setId}.xml`);
-
-      // Ensure the directory exists
-      if (!fs.existsSync(xmlDir)) {
-        fs.mkdirSync(xmlDir, { recursive: true });
-      }
-
-      // Write the XML to file
-      fs.writeFileSync(xmlPath, response.data);
-      this.logger.log(`XML saved to ${xmlPath}`);
 
       // Parse the XML response into a JavaScript object
       const parsedXml = await this.parser.parseStringPromise(response.data);
