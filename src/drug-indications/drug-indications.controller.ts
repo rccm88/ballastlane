@@ -105,6 +105,6 @@ export class DrugIndicationsController {
   })
   @ApiResponse({ status: 404, description: 'Drug indication not found' })
   remove(@Param('id', ParseUUIDPipe) id: string) {
-    return this.drugIndicationsService.remove(id);
+    return this.drugIndicationsService.remove({ where: { id } });
   }
 }

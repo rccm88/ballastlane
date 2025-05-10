@@ -60,8 +60,8 @@ export class DrugIndicationsService {
     return this.drugIndicationRepository.save(updatedEntity);
   }
 
-  async remove(id: string): Promise<void> {
-    const drugIndication = await this.findOne({ where: { id } });
+  async remove(options: FindOneOptions<DrugIndication>): Promise<void> {
+    const drugIndication = await this.findOne(options);
 
     if (!drugIndication) {
       throw new NotFoundException('Drug indication not found');
