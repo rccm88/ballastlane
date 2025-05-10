@@ -23,9 +23,9 @@ import {
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { DrugIndication } from './entities/drug-indication.entity';
-import { RolesGuard } from 'src/auth/guards/roles.guard';
-import { Roles } from 'src/auth/decorators/roles.decorator';
-import { UserRole } from 'src/auth/constants/roles.enum';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { UserRole } from '../auth/constants/roles.enum';
 
 @ApiTags('drug-indications')
 @ApiBearerAuth()
