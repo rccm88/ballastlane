@@ -151,7 +151,10 @@ export class DailyMedService {
               text: currentIndication.trim(),
             });
           }
-          currentTitle = paragraph.content._;
+          currentTitle =
+            typeof paragraph.content === 'string'
+              ? paragraph.content
+              : paragraph.content._;
           currentIndication = '';
         } else if (paragraph._) {
           // This is the indication text
