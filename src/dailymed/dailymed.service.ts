@@ -203,26 +203,7 @@ export class DailyMedService {
       throw new Error('OPENAI_API_KEY is not set in environment variables.');
     }
 
-    const prompt = `
-  You are a medical coding expert.
-  
-  Given the following drug indications, map each to the most relevant ICD-10 code and description.
-  If there is no clear ICD-10 match, set the code and description to null.
-  
-  Output as a JSON array in this format:
-  [
-    {
-      "title": "...",
-      "text": "...",
-      "icd10_code": "...",
-      "icd10_description": "..."
-    },
-    ...
-  ]
-  
-  Indications:
-  ${JSON.stringify(indications, null, 2)}
-  `;
+    const prompt = getPrompt(indications);
 
     try {
       const response = await axios.post(
@@ -269,3 +250,26 @@ export class DailyMedService {
     }
   }
 }
+
+const getPrompt = (indications: Indication[]) => {
+  return `
+  You are a medical coding expert.
+  
+  Given the following drug indications, map each to the most relevant ICD-10 code and description.
+  If there is no clear ICD-10 match, set the code and description to null.
+  
+  Output as a JSON array in this format:
+  [
+    {
+      "title": "...",
+      "text": "...",
+      "icd10_code": "...",
+      "icd10_description": "..."
+    },
+    ...
+  ]
+  
+  Indications:
+  ${JSON.stringify(indications, null, 2)}
+  `;
+};
