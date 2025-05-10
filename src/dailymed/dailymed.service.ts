@@ -7,6 +7,9 @@ import * as xml2js from 'xml2js';
 import * as fs from 'fs';
 import * as path from 'path';
 
+const DAILYMED_API_URL = 'https://dailymed.nlm.nih.gov/dailymed/services/v2';
+const OPENAI_API_URL = 'https://api.openai.com/v1/chat/completions';
+
 interface Indication {
   title: string;
   text: string;
@@ -29,7 +32,7 @@ export class DailyMedService {
     private readonly configService: ConfigService,
     private readonly drugIndicationsService: DrugIndicationsService,
   ) {
-    this.baseUrl = 'https://dailymed.nlm.nih.gov/dailymed/services/v2';
+    this.baseUrl = DAILYMED_API_URL;
     this.parser = new xml2js.Parser({
       explicitArray: false,
       mergeAttrs: true,
@@ -340,7 +343,7 @@ export class DailyMedService {
 
     try {
       const response = await axios.post(
-        'https://api.openai.com/v1/chat/completions',
+        OPENAI_API_URL,
         {
           model: 'gpt-4-turbo',
           temperature: 0.2,
