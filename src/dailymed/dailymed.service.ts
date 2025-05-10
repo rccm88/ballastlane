@@ -5,6 +5,7 @@ import { DrugIndicationsService } from '../drug-indications/drug-indications.ser
 import * as xml2js from 'xml2js';
 import { OpenAiService } from '../openai/openai.service';
 import { CreateDrugIndicationDto } from 'src/drug-indications/dto/create-drug-indication.dto';
+import { DrugIndication } from 'src/drug-indications/entities/drug-indication.entity';
 
 const DAILYMED_API_URL = 'https://dailymed.nlm.nih.gov/dailymed/services/v2';
 
@@ -50,7 +51,7 @@ export class DailyMedService {
    * @param name Drug name to search for
    * @returns First matching SET ID as a string (or null if not found)
    */
-  async searchDrugSetId(name: string): Promise<string | null> {
+  async searchDrugSetId(name: string): Promise<DrugIndication[] | null> {
     try {
       const endpoint = `${this.baseUrl}/spls.json`;
 
@@ -84,13 +85,13 @@ export class DailyMedService {
           );
 
           // Store the mapped indications in the database
-          await this.drugIndicationsService.createBulk({
+          return await this.drugIndicationsService.createBulk({
             indications: indicationsWithDrugName as CreateDrugIndicationDto[],
           });
         }
       }
 
-      return firstMatch?.setid || null;
+      return null;
     } catch (error) {
       this.logger.error(
         `Error fetching SET ID for drug "${name}": ${error.message}`,
