@@ -79,6 +79,16 @@ The API documentation is available at `http://localhost:3000/api` when the serve
 - `POST /auth/login` - User login
 - `POST /auth/register` - User registration
 
+### User Endpoints
+
+- `POST /users` - Create a new user (requires ADMIN role)
+- `GET /users` - Get all users (requires ADMIN role)
+- `GET /users/:id` - Get user by UUID (requires ADMIN role)
+- `PATCH /users/:id` - Update user by UUID (requires ADMIN role)
+- `DELETE /users/:id` - Delete user by UUID (requires ADMIN role)
+
+Note: All endpoints require JWT authentication and appropriate role (admin).
+
 ### Drug Indications Endpoints
 
 - `POST /drug-indications` - Create a new drug indication (requires USER role)
