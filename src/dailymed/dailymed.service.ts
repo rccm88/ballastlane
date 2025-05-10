@@ -50,9 +50,9 @@ export class DailyMedService {
   /**
    * Search for a drug name and return the first matching SET ID
    * @param name Drug name to search for
-   * @returns First matching SET ID as a string (or null if not found)
+   * @returns First matching SET ID as a string (or empty array if not found)
    */
-  async searchDrugSetId(name: string): Promise<DrugIndication[] | null> {
+  async searchDrugLabel(name: string): Promise<DrugIndication[]> {
     try {
       const endpoint = `${this.baseUrl}/spls.json`;
 
@@ -97,7 +97,7 @@ export class DailyMedService {
         }
       }
 
-      return null;
+      return [];
     } catch (error) {
       this.logger.error(
         `Error fetching SET ID for drug "${name}": ${error.message}`,

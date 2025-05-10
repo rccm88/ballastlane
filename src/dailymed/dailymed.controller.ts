@@ -29,7 +29,7 @@ export class DailyMedController {
   @ApiQuery({ name: 'name', description: 'Drug name to search for' })
   @ApiResponse({
     status: 200,
-    description: 'Returns the indications for the first matching drug',
+    description: 'Returns the indications for the matching drug',
     schema: {
       type: 'object',
       properties: {
@@ -53,8 +53,8 @@ export class DailyMedController {
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   async searchDrugLabels(
     @Query('name') name: string,
-  ): Promise<{ indications: DrugIndication[] | null }> {
-    const indications = await this.dailyMedService.searchDrugSetId(name);
+  ): Promise<{ indications: DrugIndication[] }> {
+    const indications = await this.dailyMedService.searchDrugLabel(name);
     return { indications };
   }
 }
