@@ -87,7 +87,7 @@ export class DailyMedService {
 
           // Remove existing indications for this drug
           await this.drugIndicationsService.removeBulk({
-            where: { drugName: ILike(name) },
+            where: { drugName: ILike(name.toLowerCase()) },
           });
 
           // Store the mapped indications in the database

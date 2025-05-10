@@ -64,7 +64,8 @@ export class DrugIndicationsController {
   findAll() {
     return this.drugIndicationsService.findAll({
       order: {
-        createdAt: 'DESC',
+        drugName: 'ASC',
+        title: 'ASC',
       },
     });
   }

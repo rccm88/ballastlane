@@ -18,7 +18,10 @@ export class DailyMedController {
 
   @Get('search')
   // @Roles(UserRole.USER)
-  @ApiOperation({ summary: 'Search for a drug and return its indications' })
+  @ApiOperation({
+    summary:
+      'Search for a drug label, return its indications and save them to the database',
+  })
   @ApiQuery({ name: 'name', description: 'Drug name to search for' })
   @ApiResponse({
     status: 200,
