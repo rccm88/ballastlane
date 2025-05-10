@@ -67,12 +67,15 @@ export class DailyMedService {
         const indications = await this.getIndicationsFromSetId(
           firstMatch.setid,
         );
-        console.log(indications);
 
         const mappedIndications =
           await this.openAiService.mapIndicationsToICD10(indications);
 
         console.log(mappedIndications);
+
+        if (mappedIndications.length > 0) {
+          // Store the mapped indications in the database
+        }
       }
 
       return firstMatch?.setid || null;

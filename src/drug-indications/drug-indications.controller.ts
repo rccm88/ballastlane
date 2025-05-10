@@ -13,6 +13,7 @@ import {
 import { DrugIndicationsService } from './drug-indications.service';
 import { CreateDrugIndicationDto } from './dto/create-drug-indication.dto';
 import { UpdateDrugIndicationDto } from './dto/update-drug-indication.dto';
+import { CreateBulkDrugIndicationsDto } from './dto/create-bulk-drug-indications.dto';
 import {
   ApiTags,
   ApiOperation,
@@ -21,6 +22,7 @@ import {
   ApiBearerAuth,
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { DrugIndication } from './entities/drug-indication.entity';
 
 @ApiTags('drug-indications')
 @ApiBearerAuth()
@@ -35,11 +37,25 @@ export class DrugIndicationsController {
   @ApiOperation({ summary: 'Create a new drug indication' })
   @ApiResponse({
     status: 201,
-    description: 'Drug indication successfully created',
+    description: 'The drug indication has been successfully created.',
+    type: DrugIndication,
   })
   @ApiResponse({ status: 400, description: 'Invalid input data' })
   create(@Body() createDrugIndicationDto: CreateDrugIndicationDto) {
     return this.drugIndicationsService.create(createDrugIndicationDto);
+  }
+
+  @Post('bulk')
+  @ApiOperation({ summary: 'Create multiple drug indications' })
+  @ApiResponse({
+    status: 201,
+    description: 'The drug indications have been successfully created.',
+    type: [DrugIndication],
+  })
+  createBulk(
+    @Body() createBulkDrugIndicationsDto: CreateBulkDrugIndicationsDto,
+  ) {
+    return this.drugIndicationsService.createBulk(createBulkDrugIndicationsDto);
   }
 
   @Get()

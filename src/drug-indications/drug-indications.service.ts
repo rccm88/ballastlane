@@ -4,6 +4,7 @@ import { FindOneOptions, Repository } from 'typeorm';
 import { CreateDrugIndicationDto } from './dto/create-drug-indication.dto';
 import { UpdateDrugIndicationDto } from './dto/update-drug-indication.dto';
 import { DrugIndication } from './entities/drug-indication.entity';
+import { CreateBulkDrugIndicationsDto } from './dto/create-bulk-drug-indications.dto';
 
 @Injectable()
 export class DrugIndicationsService {
@@ -19,6 +20,15 @@ export class DrugIndicationsService {
       createDrugIndicationDto,
     );
     return this.drugIndicationRepository.save(drugIndication);
+  }
+
+  async createBulk(
+    createBulkDrugIndicationsDto: CreateBulkDrugIndicationsDto,
+  ): Promise<DrugIndication[]> {
+    const drugIndications = createBulkDrugIndicationsDto.indications.map(
+      (dto) => this.drugIndicationRepository.create(dto),
+    );
+    return this.drugIndicationRepository.save(drugIndications);
   }
 
   async findAll(): Promise<DrugIndication[]> {
