@@ -16,6 +16,7 @@ A NestJS-based API for processing and analyzing drug indications data from Daily
 - Node.js (v18 or higher)
 - Docker and Docker Compose
 - PostgreSQL (if running locally)
+- Redis (if running locally)
 - OpenAI API key
 
 ## Setup Instructions
@@ -38,6 +39,8 @@ DB_PORT=5432
 DB_USERNAME=postgres
 DB_PASSWORD=postgres
 DB_DATABASE=drug_indications
+REDIS_HOST=localhost
+REDIS_PORT=6379
 OPENAI_API_KEY=your_openai_api_key
 JWT_SECRET=your_jwt_secret
 ```
@@ -134,9 +137,18 @@ Note: All endpoints require JWT authentication and USER role.
 
    - The application is containerized for easy scaling
    - Implement load balancing for multiple instances
-   - Use caching mechanisms for frequently accessed data
+   - Redis caching for frequently accessed data
+   - Distributed caching for multiple application instances
 
-3. **API Rate Limiting**
+3. **Caching Strategy**
+
+   - Redis in-memory caching for fast data access
+   - Drug indications cached for 1 hour
+   - DailyMed search results cached for 24 hours
+   - Automatic cache invalidation on data updates
+   - Graceful fallback to database when cache is unavailable
+
+4. **API Rate Limiting**
    - Implement rate limiting for external API calls
    - Use queue systems for batch processing
    - Consider implementing circuit breakers
@@ -145,32 +157,42 @@ Note: All endpoints require JWT authentication and USER role.
 
 1. **Performance Optimizations**
 
-   - Implement Redis caching for frequently accessed data
+   - Implement Redis cluster for high availability
    - Add database indexing for common queries
    - Implement batch processing for large datasets
+   - Add cache warming strategies
+   - Implement cache compression for large datasets
 
 2. **Security Enhancements**
 
    - Add API key rotation mechanism
    - Implement request validation middleware
    - Add rate limiting per user/IP
+   - Secure Redis with authentication
+   - Implement Redis SSL/TLS
 
 3. **Monitoring and Logging**
 
    - Implement structured logging
    - Add performance monitoring
    - Set up error tracking
+   - Monitor Redis memory usage
+   - Track cache hit/miss ratios
 
 4. **Testing**
 
    - Increase test coverage
    - Add integration tests
    - Implement load testing
+   - Add cache testing scenarios
+   - Test cache invalidation strategies
 
 5. **Documentation**
    - Add more detailed API documentation
    - Include code examples
    - Add troubleshooting guide
+   - Document caching strategies
+   - Add Redis configuration guide
 
 ## Production Challenges
 
@@ -179,23 +201,31 @@ Note: All endpoints require JWT authentication and USER role.
    - Implement data validation
    - Add data backup mechanisms
    - Implement data recovery procedures
+   - Handle cache consistency across instances
+   - Implement cache versioning
 
 2. **Security**
 
    - Regular security audits
    - Implement WAF (Web Application Firewall)
    - Regular dependency updates
+   - Secure Redis configuration
+   - Implement cache encryption
 
 3. **Performance**
 
    - Monitor API response times
    - Implement caching strategies
    - Regular performance testing
+   - Monitor Redis performance
+   - Optimize cache TTLs
 
 4. **Maintenance**
    - Regular database maintenance
    - Log rotation
    - Backup verification
+   - Redis memory management
+   - Cache cleanup procedures
 
 ### How would you lead an engineering team to implement and maintain this project?
 
@@ -205,11 +235,12 @@ Note: All endpoints require JWT authentication and USER role.
    - Create a detailed project timeline with milestones
    - Set up development, staging, and production environments
    - Implement CI/CD pipelines for automated testing and deployment
+   - Plan Redis infrastructure and scaling
 
 2. **Team Structure and Roles**
 
    - Backend Developers (NestJS, PostgreSQL)
-   - DevOps Engineer (Docker, CI/CD)
+   - DevOps Engineer (Docker, CI/CD, Redis)
    - QA Engineer (Testing, Quality Assurance)
    - Technical Lead (Architecture, Code Review)
    - Product Owner (Requirements, Prioritization)
@@ -221,6 +252,7 @@ Note: All endpoints require JWT authentication and USER role.
    - Enforce code review process
    - Maintain comprehensive documentation
    - Regular code quality checks and refactoring
+   - Cache-aware development practices
 
 4. **Testing Strategy**
 
@@ -229,6 +261,7 @@ Note: All endpoints require JWT authentication and USER role.
    - E2E tests for critical user flows
    - Performance testing for scalability
    - Security testing and vulnerability scanning
+   - Cache testing and validation
 
 5. **Monitoring and Maintenance**
 
@@ -237,6 +270,7 @@ Note: All endpoints require JWT authentication and USER role.
    - Regular performance monitoring
    - Database maintenance and optimization
    - Security updates and dependency management
+   - Redis monitoring and maintenance
 
 6. **Team Communication and Collaboration**
 
@@ -245,6 +279,7 @@ Note: All endpoints require JWT authentication and USER role.
    - Technical documentation updates
    - Knowledge sharing sessions
    - Regular team training on new technologies
+   - Cache strategy discussions
 
 7. **Quality Assurance**
 
@@ -253,6 +288,7 @@ Note: All endpoints require JWT authentication and USER role.
    - Performance benchmarks
    - Security compliance checks
    - Regular code reviews and pair programming
+   - Cache performance monitoring
 
 8. **Risk Management**
 
@@ -261,6 +297,7 @@ Note: All endpoints require JWT authentication and USER role.
    - Disaster recovery planning
    - Dependency vulnerability monitoring
    - API rate limiting and protection
+   - Cache failure handling
 
 9. **Continuous Improvement**
 
@@ -269,6 +306,7 @@ Note: All endpoints require JWT authentication and USER role.
    - Code refactoring
    - Technology stack updates
    - Process improvements based on retrospectives
+   - Cache strategy optimization
 
 10. **Documentation and Knowledge Base**
     - API documentation maintenance
@@ -276,6 +314,7 @@ Note: All endpoints require JWT authentication and USER role.
     - Deployment procedures
     - Troubleshooting guides
     - Team onboarding materials
+    - Cache configuration and management guides
 
 ## License
 
