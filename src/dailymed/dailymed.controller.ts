@@ -1,4 +1,4 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { DailyMedService } from './dailymed.service';
 import {
   ApiTags,
@@ -8,19 +8,23 @@ import {
   ApiQuery,
 } from '@nestjs/swagger';
 import { DrugIndication } from 'src/drug-indications/entities/drug-indication.entity';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { UserRole } from 'src/auth/constants/roles.enum';
 
 @ApiTags('dailymed')
 @ApiBearerAuth()
-// @UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('dailymed')
 export class DailyMedController {
   constructor(private readonly dailyMedService: DailyMedService) {}
 
   @Get('search')
-  // @Roles(UserRole.USER)
+  @Roles(UserRole.USER)
   @ApiOperation({
     summary:
-      'Search for a drug label, return its indications and save them to the database',
+      'Search for a drug label, return its indications and save them to the database (user role)',
   })
   @ApiQuery({ name: 'name', description: 'Drug name to search for' })
   @ApiResponse({
